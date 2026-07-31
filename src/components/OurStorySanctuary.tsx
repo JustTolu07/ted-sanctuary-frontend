@@ -26,6 +26,22 @@ import {
 } from 'lucide-react';
 import { Memory } from '../types';
 
+type GalleryMediaType = 'photo' | 'video' | 'audio' | 'voicenote';
+
+interface GalleryMediaItem {
+  id: string;
+  type: GalleryMediaType;
+  title: string;
+  description: string;
+  date: string;
+  mediaUrl: string;
+  thumbnailUrl?: string;
+  tag: string;
+  isFavorite: boolean;
+  location?: string;
+  duration?: string;
+}
+
 const INITIAL_GALLERY_ITEMS: GalleryMediaItem[] = [];
 
 interface OurStorySanctuaryProps {
@@ -47,7 +63,7 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
   });
 
   // Filter state
-  const [activeFilter, setActiveFilter] = useState<'all' | 'photo' | 'video' | 'favorite'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'photo' | 'video' | 'audio' | 'favorite'>('all');
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -119,7 +135,7 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
               className="px-5 py-3 bg-gradient-to-r from-amber-400 to-rose-400 hover:from-amber-300 hover:to-rose-300 text-[#3D2616] font-sans font-bold text-xs sm:text-sm rounded-full shadow-lg cursor-pointer transition-transform active:scale-95 flex items-center justify-center gap-2 shrink-0 border border-white/30"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Photo or Video</span>
+              <span>Add Photo, Video, or Song</span>
             </button>
 
             {process.env.NODE_ENV === 'development' && (
@@ -142,6 +158,7 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
             { id: 'all', label: 'All Media 🌟', count: galleryItems.length },
             { id: 'photo', label: 'Photos 📸', count: galleryItems.filter(i => i.type === 'photo').length },
             { id: 'video', label: 'Videos 🎥', count: galleryItems.filter(i => i.type === 'video').length },
+            { id: 'audio', label: 'Songs 🎵', count: galleryItems.filter(i => i.type === 'audio').length },
             { id: 'favorite', label: 'Favorites ⭐', count: galleryItems.filter(i => i.isFavorite).length }
           ].map((tab) => (
             <button
@@ -178,7 +195,7 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
             No memories in this filter yet!
           </h3>
           <p className="text-xs text-[#5c3a21]/70 max-w-sm mx-auto font-sans">
-            Tap the button below to upload your first photo or video to Smadar's Sanctuary Gallery!
+            Tap the button below to upload your first photo, video, or song to Smadar's Sanctuary Gallery!
           </p>
           <button
             onClick={() => setIsAddModalOpen(true)}
@@ -226,6 +243,23 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
                     {item.duration && (
                       <span className="absolute bottom-2.5 right-2.5 bg-black/70 text-white font-mono text-[10px] px-2 py-0.5 rounded-full backdrop-blur-xs">
                         🎥 {item.duration}
+                      </span>
+                    )}
+                  </div>
+                ) : item.type === 'audio' ? (
+                  <div className="w-full h-full bg-gradient-to-br from-violet-950 via-[#241323] to-[#1C1B30] p-6 flex flex-col justify-between text-white">
+                    <div className="flex flex-col items-center justify-center gap-3 h-full text-center">
+                      <div className="w-16 h-16 rounded-3xl bg-white/10 border border-white/15 flex items-center justify-center">
+                        <Music className="w-8 h-8 text-rose-300" />
+                      </div>
+                      <div>
+                        <h4 className="font-serif font-bold text-white text-sm line-clamp-2">{item.title}</h4>
+                        <p className="text-[10px] text-white/70 mt-1">{item.description || 'Song memory'}</p>
+                      </div>
+                    </div>
+                    {item.duration && (
+                      <span className="text-[10px] font-mono text-white/70 self-start">
+                        🎵 {item.duration}
                       </span>
                     )}
                   </div>
@@ -311,17 +345,19 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
         onUpload={async (payload: CreateMemoryPayload) => {
           // Convert to local GalleryMediaItem and add to gallery
           const isVideo = payload.image.type.startsWith('video/');
+          const isAudio = payload.image.type.startsWith('audio/');
           const newItem: GalleryMediaItem = {
             id: 'gallery-' + Date.now(),
-            type: isVideo ? 'video' : 'photo',
+            type: isAudio ? 'audio' : isVideo ? 'video' : 'photo',
             title: payload.title || 'Untitled',
             date: payload.date || new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
             location: undefined,
             description: payload.description || '',
             mediaUrl: URL.createObjectURL(payload.image),
             thumbnailUrl: undefined,
-            tag: isVideo ? 'Video Memory 🎥' : 'Polaroid Photo 📸',
+            tag: isAudio ? 'Song 🎵' : isVideo ? 'Video Memory 🎥' : 'Polaroid Photo 📸',
             isFavorite: true,
+            duration: undefined,
           };
 
           setGalleryItems(prev => [newItem, ...prev]);
@@ -356,6 +392,15 @@ export default function OurStorySanctuary({ onSelectMemoryModal }: OurStorySanct
                     autoPlay
                     className="w-full max-h-[55vh] object-contain"
                   />
+                ) : selectedMedia.type === 'audio' ? (
+                  <div className="p-12 text-center space-y-4 flex flex-col items-center justify-center">
+                    <Music className="w-16 h-16 text-rose-400 animate-pulse mx-auto" />
+                    <div className="space-y-1 text-white/80">
+                      <p className="font-semibold text-lg">{selectedMedia.title}</p>
+                      <p className="text-sm">{selectedMedia.description || 'A song saved for Smadar'}</p>
+                    </div>
+                    <audio src={selectedMedia.mediaUrl} controls autoPlay className="w-full max-w-xl" />
+                  </div>
                 ) : selectedMedia.type === 'voicenote' ? (
                   <div className="p-12 text-center space-y-4">
                     <Mic className="w-16 h-16 text-rose-400 animate-pulse mx-auto" />

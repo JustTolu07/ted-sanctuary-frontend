@@ -1,7 +1,24 @@
 import React, { useRef, useState } from 'react';
 import { Image, File as FileIcon } from 'lucide-react';
 
-const ALLOWED = ['image/png','image/jpeg','image/jpg','image/webp','image/gif','video/mp4','video/quicktime'];
+const ALLOWED = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/gif',
+  'video/mp4',
+  'video/quicktime',
+  'audio/mpeg',
+  'audio/mp3',
+  'audio/wav',
+  'audio/ogg',
+  'audio/x-wav',
+  'audio/mp4',
+  'audio/x-m4a',
+  'audio/aac',
+  'audio/webm'
+];
 
 interface Props {
   file: File | null;
@@ -51,7 +68,7 @@ export default function UploadDropzone({ file, onFile }: Props) {
             <Image className="w-7 h-7 text-gray-400" />
             <h4 className="text-sm font-semibold text-gray-700">Upload</h4>
           </div>
-          <p className="mt-1 text-sm text-gray-500">PNG, JPG, WEBP, GIF, MP4, MOV — Tap to browse or drag files here</p>
+          <p className="mt-1 text-sm text-gray-500">PNG, JPG, WEBP, GIF, MP4, MOV, MP3, WAV, OGG, M4A — Tap to browse or drag files here</p>
           {file && (
             <p className="mt-2 text-xs text-gray-400">Selected: {file.name} • {(file.size / 1024 / 1024).toFixed(2)} MB</p>
           )}

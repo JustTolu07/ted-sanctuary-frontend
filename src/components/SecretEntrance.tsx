@@ -36,7 +36,7 @@ export default function SecretEntrance({ onUnlock }: { onUnlock: () => void }) {
         setStoredHash(hash);
       } else {
         // default answer: "holla" — harmless but private
-        const hx = await sha256('xael');
+        const hx = await sha256('holla');
         localStorage.setItem(STORAGE_HASH, hx);
         setStoredHash(hx);
       }
@@ -73,7 +73,7 @@ export default function SecretEntrance({ onUnlock }: { onUnlock: () => void }) {
   const devSetSecret = async () => {
     const q = prompt('Question (e.g. What name do you use for me?)', question) || question;
     const h = prompt('Hint (UNIQUE) ', hint) || hint;
-    const ans = prompt('Answer (cleartext) — this will be hashed locally', 'xael') || 'xael';
+    const ans = prompt('Answer (cleartext) — this will be hashed locally', 'holla') || 'holla';
     const hh = await sha256(ans.trim().toLowerCase());
     localStorage.setItem(STORAGE_Q, q);
     localStorage.setItem(STORAGE_HINT, h);
@@ -91,28 +91,28 @@ export default function SecretEntrance({ onUnlock }: { onUnlock: () => void }) {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="max-w-xl w-full bg-white/5 border border-white/10 rounded-3xl p-6 shadow-2xl backdrop-blur-md"
       >
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col sm:flex-row items-start gap-4">
           <div className="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg">
             <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 2, repeat: Infinity }}>
               <div className="text-4xl">🧸</div>
             </motion.div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-serif font-bold">Welcome home, beautiful. <span className="text-rose-300">❤️</span></h1>
             <p className="mt-2 text-sm text-white/85">This little corner of the internet was built only for you. Before we begin, TED has a tiny question only you would know.</p>
 
             <form onSubmit={(e) => handleSubmit(e)} className="mt-4">
               <div className="text-sm text-white/90 mb-2">{question}</div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   autoFocus
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/10 focus:outline-none placeholder-white/60"
+                  className="w-full flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/10 focus:outline-none placeholder-white/60"
                   placeholder="Type your answer..."
                 />
-                <button type="button" onClick={() => setShowHint(true)} className="px-3 py-2 rounded-xl bg-white/10">Need a hint?</button>
+                <button type="button" onClick={() => setShowHint(true)} className="w-full sm:w-auto px-3 py-3 rounded-xl bg-white/10">Need a hint?</button>
               </div>
 
               {showHint && (
@@ -124,11 +124,11 @@ export default function SecretEntrance({ onUnlock }: { onUnlock: () => void }) {
                 </motion.div>
               )}
 
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <button type="submit" disabled={loading || !storedHash} className="px-6 py-3 bg-rose-500 hover:bg-rose-600 rounded-2xl font-semibold disabled:cursor-not-allowed disabled:opacity-60">
+              <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <button type="submit" disabled={loading || !storedHash} className="w-full sm:w-auto px-6 py-3 bg-rose-500 hover:bg-rose-600 rounded-2xl font-semibold disabled:cursor-not-allowed disabled:opacity-60">
                   {loading ? 'Thinking...' : !storedHash ? 'Waking up TED...' : 'Enter Sanctuary'}
                 </button>
-                <button type="button" onClick={() => { setInput(''); setFeedback(null); }} className="px-4 py-2 bg-white/5 rounded-xl">Clear</button>
+                <button type="button" onClick={() => { setInput(''); setFeedback(null); }} className="w-full sm:w-auto px-4 py-3 bg-white/5 rounded-xl">Clear</button>
               </div>
 
               {feedback && <div className="mt-3 text-sm text-white/90">{feedback}</div>}
