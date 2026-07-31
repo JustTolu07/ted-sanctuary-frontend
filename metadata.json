@@ -1,0 +1,6 @@
+{
+  "name": "Smadar's Digital Companion",
+  "description": "A deeply personal digital companion built exclusively for Smadar by Toluwani, featuring TED AI bear companion, daily mood check-ins, cycle care, and our relationship scrapbook story.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
