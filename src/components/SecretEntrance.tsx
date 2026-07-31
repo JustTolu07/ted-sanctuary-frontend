@@ -35,8 +35,8 @@ export default function SecretEntrance({ onUnlock }: { onUnlock: () => void }) {
       if (hash) {
         setStoredHash(hash);
       } else {
-        // default answer: "sunrisekiss" — harmless but private
-        const hx = await sha256('sunrisekiss');
+        // default answer: "holla" — harmless but private
+        const hx = await sha256('xael');
         localStorage.setItem(STORAGE_HASH, hx);
         setStoredHash(hx);
       }
@@ -71,9 +71,9 @@ export default function SecretEntrance({ onUnlock }: { onUnlock: () => void }) {
 
   // Dev helper: set secret (visible only in dev)
   const devSetSecret = async () => {
-    const q = prompt('Question (e.g. How do I say hello?)', question) || question;
-    const h = prompt('Hint (short) ', hint) || hint;
-    const ans = prompt('Answer (cleartext) — this will be hashed locally', 'sunrisekiss') || 'sunrisekiss';
+    const q = prompt('Question (e.g. What name do you use for me?)', question) || question;
+    const h = prompt('Hint (UNIQUE) ', hint) || hint;
+    const ans = prompt('Answer (cleartext) — this will be hashed locally', 'xael') || 'xael';
     const hh = await sha256(ans.trim().toLowerCase());
     localStorage.setItem(STORAGE_Q, q);
     localStorage.setItem(STORAGE_HINT, h);
